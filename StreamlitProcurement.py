@@ -76,7 +76,8 @@ def process_document(file):
         """
         
         response = llm.invoke([HumanMessage(content=prompt)])
-        extracted_data.append(response.content.strip())
+        # Convert the extracted data to uppercase before appending
+        extracted_data.append(response.content.strip().upper())
     
     return extracted_data
 
@@ -120,7 +121,8 @@ if "extracted_data" in st.session_state and st.session_state["extracted_data"]:
 
             # Use edited data instead of original extracted data
             for row_text in st.session_state["edited_data"]:
-                sheet.cell(row=row_idx, column=desc_col, value=row_text).alignment = Alignment(wrap_text=True)
+                # Convert the edited text to uppercase before writing it to the Excel sheet
+                sheet.cell(row=row_idx, column=desc_col, value=row_text.upper()).alignment = Alignment(wrap_text=True)
                 if desc2_col:
                     sheet.cell(row=row_idx, column=desc2_col, value="")  # Keep Description 2 blank
                 row_idx += 1  # Move to the next row
@@ -131,3 +133,4 @@ if "extracted_data" in st.session_state and st.session_state["extracted_data"]:
             st.download_button("📥 Download Updated Excel", data=open(output_path, "rb"), file_name="updated_template.xlsx")
         else:
             st.error("⚠️ 'Description' column not found in Excel template.")
+
